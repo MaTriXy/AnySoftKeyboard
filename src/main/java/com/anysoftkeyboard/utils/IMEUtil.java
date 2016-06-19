@@ -23,7 +23,7 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.anysoftkeyboard.AnySoftKeyboard;
 import com.anysoftkeyboard.api.KeyCodes;
-import com.menny.android.anysoftkeyboard.FeaturesSet;
+import com.menny.android.anysoftkeyboard.BuildConfig;
 
 import java.util.ArrayList;
 
@@ -128,7 +128,7 @@ public class IMEUtil {
                 }
             }
         }
-        if (FeaturesSet.DEBUG_LOG) {
+        if (BuildConfig.DEBUG) {
             Log.d(TAG, "editDistance:" + s + "," + t);
             for (int i = 0; i < dp.length; ++i) {
                 StringBuffer sb = new StringBuffer();
@@ -252,19 +252,6 @@ public class IMEUtil {
             } else {
                 return mYBuf[index];
             }
-        }
-
-        public String getLastString() {
-            StringBuffer sb = new StringBuffer();
-            for (int i = 0; i < mLength; ++i) {
-                char c = mCharBuf[normalize(mEnd - 1 - i)];
-                if (!((AnySoftKeyboard) mContext).isWordSeparator(c)) {
-                    sb.append(c);
-                } else {
-                    break;
-                }
-            }
-            return sb.reverse().toString();
         }
 
         public void reset() {

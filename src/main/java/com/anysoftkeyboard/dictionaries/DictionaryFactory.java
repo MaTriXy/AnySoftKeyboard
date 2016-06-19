@@ -44,16 +44,15 @@ public class DictionaryFactory {
     public synchronized EditableDictionary createUserDictionary(Context context, String locale) {
         if (mUserDictionary != null) {
             if (!mUserDictionary.isClosed() && equalsString(mUserDictionaryLocale, locale)) {
-                Log.d(TAG, "Returning cached user-dictionary for locale " + mUserDictionaryLocale);
+                Log.d(TAG, "Returning cached user-dictionary for locale %s", mUserDictionaryLocale);
                 return mUserDictionary;
             } else {
                 mUserDictionary.close();
             }
         }
-        Log.d(TAG, "Creating a new UserDictionary for locale " + locale);
+        Log.d(TAG, "Creating a new UserDictionary for locale %s", locale);
         mUserDictionary = new UserDictionary(context, locale);
-        DictionaryASyncLoader loader = new DictionaryASyncLoader(null);
-        loader.execute(mUserDictionary);
+        DictionaryASyncLoader.executeLoaderParallel(null, mUserDictionary);
 
         mUserDictionaryLocale = locale;
         return mUserDictionary;
@@ -75,12 +74,10 @@ public class DictionaryFactory {
             }
         }
 
-        Log.d(TAG, "Creating AutoDictionary for locale: " + currentAutoDictionaryLocale);
+        Log.d(TAG, "Creating AutoDictionary for locale: %s", currentAutoDictionaryLocale);
 
         mAutoDictionary = new AutoDictionary(context, currentAutoDictionaryLocale);
-
-        DictionaryASyncLoader loader = new DictionaryASyncLoader(null);
-        loader.execute(mAutoDictionary);
+        DictionaryASyncLoader.executeLoaderParallel(null, mAutoDictionary);
 
         return mAutoDictionary;
     }

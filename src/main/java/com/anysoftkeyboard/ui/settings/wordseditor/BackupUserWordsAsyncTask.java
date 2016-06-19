@@ -37,10 +37,8 @@ final class BackupUserWordsAsyncTask extends UserWordsEditorAsyncTask {
 
     private final String mFilename;
 
-    ArrayList<String> mLocalesToSave = new ArrayList<String>();
+    private final ArrayList<String> mLocalesToSave = new ArrayList<>();
 
-    private String mLocale;
-    private UserDictionary mDictionary;
     private final Context mAppContext;
 
     BackupUserWordsAsyncTask(UserDictionaryEditorFragment callingFragment, String filename) {
@@ -56,8 +54,8 @@ final class BackupUserWordsAsyncTask extends UserWordsEditorAsyncTask {
         if (a == null)
             return;
         // I can access the UI object in the UI thread.
-        for (int i = 0; i < a.mLanguagesSpinner.getCount(); i++) {
-            final String locale = ((DictionaryLocale) a.mLanguagesSpinner.getItemAtPosition(i)).getLocale();
+        for (int i = 0; i < a.getLanguagesSpinner().getCount(); i++) {
+            final String locale = ((DictionaryLocale) a.getLanguagesSpinner().getItemAtPosition(i)).getLocale();
             if (!TextUtils.isEmpty(locale)) {
                 mLocalesToSave.add(locale);
                 Log.d(TAG, "Found a locale to backup: " + locale);
@@ -69,27 +67,18 @@ final class BackupUserWordsAsyncTask extends UserWordsEditorAsyncTask {
     protected Void doAsyncTask(Void[] params) throws Exception {
         // http://developer.android.com/guide/topics/data/data-storage.html#filesExternal
         final File externalFolder = Environment.getExternalStorageDirectory();
-        final File targetFolder = new File(externalFolder, "/Android/data/"
-                + mAppContext.getPackageName() + "/files/");
+        final File targetFolder = new File(externalFolder, "/Android/data/" + mAppContext.getPackageName() + "/files/");
         targetFolder.mkdirs();
         // https://github.com/menny/Java-very-tiny-XmlWriter/blob/master/XmlWriter.java
         XmlWriter output = new XmlWriter(new File(targetFolder, mFilename));
 
         output.writeEntity("userwordlist");
         for (String locale : mLocalesToSave) {
-            mLocale = locale;
-            synchronized (mLocale) {
-                Log.d(TAG, "Building dictionary for locale " + mLocale);
-                publishProgress();
-                // waiting for dictionary to be ready.
-                try {
-                    mLocale.wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
+            Log.d(TAG, "Building dictionary for locale " + locale);
+            UserDictionary dictionary = new UserDictionary(mAppContext, locale);
+            dictionary.loadDictionary();
             Log.d(TAG, "Reading words from user dictionary locale " + locale);
-            WordsCursor wordsCursor = mDictionary.getWordsCursor();
+            WordsCursor wordsCursor = dictionary.getWordsCursor();
 
             output.writeEntity("wordlist").writeAttribute("locale", locale);
             Cursor cursor = wordsCursor.getCursor();
@@ -109,7 +98,7 @@ final class BackupUserWordsAsyncTask extends UserWordsEditorAsyncTask {
             }
 
             wordsCursor.close();
-            mDictionary.close();
+            dictionary.close();
 
             output.endEntity();// wordlist
         }
@@ -118,16 +107,6 @@ final class BackupUserWordsAsyncTask extends UserWordsEditorAsyncTask {
         output.close();
 
         return null;
-    }
-
-    @Override
-    protected void onProgressUpdate(Void... values) {
-        super.onProgressUpdate(values);
-        synchronized (mLocale) {
-            mDictionary = new UserDictionary(mAppContext, mLocale);
-            mDictionary.loadDictionary();
-            mLocale.notifyAll();
-        }
     }
 
     @Override

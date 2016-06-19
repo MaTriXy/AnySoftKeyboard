@@ -18,11 +18,17 @@ package com.anysoftkeyboard.devicespecific;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.os.IBinder;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.GestureDetector;
 import android.view.inputmethod.InputConnection;
+import android.view.inputmethod.InputMethodManager;
 
 import com.anysoftkeyboard.IndirectlyInstantiated;
-import com.anysoftkeyboard.base.dictionaries.WordComposer;
+import com.anysoftkeyboard.keyboards.KeyboardAddOnAndBuilder;
+
+import java.util.List;
 
 @IndirectlyInstantiated
 public interface DeviceSpecific {
@@ -33,7 +39,11 @@ public interface DeviceSpecific {
 
     GestureDetector createGestureDetector(Context appContext, AskOnGestureListener listener);
 
-    void commitCorrectionToInputConnection(InputConnection ic, WordComposer word);
+    void commitCorrectionToInputConnection(InputConnection ic, int wordOffsetInInput, CharSequence oldWord, CharSequence newWord);
 
     boolean isHardwareAcceleratedCanvas(Canvas canvas);
+
+    void reportInputMethodSubtypes(@NonNull InputMethodManager inputMethodManager, @NonNull String imeId, @NonNull List<KeyboardAddOnAndBuilder> builders);
+
+    public void reportCurrentInputMethodSubtypes(@NonNull InputMethodManager inputMethodManager, @NonNull String imeId, @NonNull IBinder token, @Nullable String keyboardLocale, @NonNull String keyboardId);
 }

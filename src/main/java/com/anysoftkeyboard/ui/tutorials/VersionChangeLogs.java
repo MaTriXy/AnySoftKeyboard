@@ -11,15 +11,78 @@ public class VersionChangeLogs {
     static List<VersionChangeLog> createChangeLog() {
         List<VersionChangeLog> log = new ArrayList<>();
 
+        log.add(new VersionChangeLog(1, 8, "r1", Uri.parse("https://github.com/AnySoftKeyboard/AnySoftKeyboard/milestones/1.8-r1"),
+                "Improvements on the keyboard preview. Now demos typing.",
+                "Several crash and bug fixes."));
+
+        log.add(new VersionChangeLog(1, 8, "", Uri.parse("https://github.com/AnySoftKeyboard/AnySoftKeyboard/milestones/1.8"),
+                "New keyboard preview - now showing EXACTLY how the keyboard should look.",
+                "New launcher icon - first iteration. Ya ya, it's not perfect.",
+                "Spellchecker fix, and other bug fixes.",
+                "Build-tools update.",
+                "Localization: DE (complete), SL (complete), MY."));
+
+        log.add(new VersionChangeLog(1, 7, "r7", Uri.parse("https://github.com/AnySoftKeyboard/AnySoftKeyboard/milestones/1.7-r7"),
+                "A few more bug fixes.",
+                "Localization: FR, NL, NO, RU, UK."));
+
+        log.add(new VersionChangeLog(1, 7, "r6", Uri.parse("https://github.com/AnySoftKeyboard/AnySoftKeyboard/milestones/1.7-r6"),
+                "Status-bar icon fix. It is not a setting.",
+                "Swipe from Backspace will delete a whole word for'ya.",
+                "Update to the English auto-complete dictionary. Way overdue.."));
+
+        log.add(new VersionChangeLog(1, 7, "r5", Uri.parse("https://github.com/AnySoftKeyboard/AnySoftKeyboard/milestones/1.7-r5"),
+                "Punctuation and space swapping magic.",
+                "Bug fixes all around."));
+
+        log.add(new VersionChangeLog(1, 7, "r4", Uri.parse("https://github.com/AnySoftKeyboard/AnySoftKeyboard/milestones/1.7-r4"),
+                "Fix for a weird bug with manually picked words, plus some crashers."));
+
+        log.add(new VersionChangeLog(1, 7, "r3", Uri.parse("https://github.com/AnySoftKeyboard/AnySoftKeyboard/milestones/1.7-r3"),
+                "Even more bugs crashed!",
+                "The utility box (swipe up from space-bar) now has SELECT-ALL key. Pro tip: long-press that key and then use left&right arrows to precisely select characters.",
+                "Talking about space-bar. Try double-spacing.",
+                "And, yes, YABTU.",
+                "Localization update: LT (100% complete!), KU."));
+
+        log.add(new VersionChangeLog(1, 7, "r2", Uri.parse("https://github.com/AnySoftKeyboard/AnySoftKeyboard/milestones/1.7-r2"),
+                "Bugs, bugs, bugs. Squashed.",
+                "A better way to load auto-complete dictionary.",
+                "Localization update: FR, LT, IT, KU."));
+
+        log.add(new VersionChangeLog(1, 7, "r1", Uri.parse("https://github.com/AnySoftKeyboard/AnySoftKeyboard/milestones/1.7-r1"),
+                "Marshmallow Permissions support - now we can annoy you with even more dialogs!",
+                "Bugs squashing all around. Thanks for the reports!",
+                "Localization update: DE, SL, FR, PT. And awesome note: German, Slovenian and French have been completely translated!",
+                "YABTU"));
+
+        log.add(new VersionChangeLog(1, 7, "", Uri.parse("https://github.com/AnySoftKeyboard/AnySoftKeyboard/milestones/1.7"),
+                "Printing-out speed ups. This is very helpful to you 150-words-a-minute wizards.",
+                "Physical-Keyboard interaction enhancements. This has Wife-Seal-of-Approval stamp on it.",
+                "Automatically switch to previously used layout in an App. Probably good for multilingual users.",
+                "And, fixed a few bugs (probably also introduced a few...)",
+                "Localization update: PL, CA, MY, UK, DE, FR, SL.",
+                "YABTU"));
+
+        log.add(new VersionChangeLog(1, 6, "r3.1", Uri.parse("https://github.com/AnySoftKeyboard/AnySoftKeyboard/milestones/1.6-r3.1"),
+                "Again, fixing a hard crash in a release. Next release will have a longer beta period."));
+
+        log.add(new VersionChangeLog(1, 6, "r3", Uri.parse("https://github.com/AnySoftKeyboard/AnySoftKeyboard/milestones/1.6-r3"),
+                "A few crash fixes.",
+                "More than a few bugs (which I found on my own!) fixing",
+                "A few more characters when long-pressing dash.",
+                "YABTU.",
+                "Localization update: KU, PL."));
+
         log.add(new VersionChangeLog(1, 6, "r2.1", Uri.parse("https://github.com/AnySoftKeyboard/AnySoftKeyboard/milestones/1.6-r2.1"),
-                "Super annoying crash fixing"));
+                "Super annoying crash fixing."));
 
         log.add(new VersionChangeLog(1, 6, "r2", Uri.parse("https://github.com/AnySoftKeyboard/AnySoftKeyboard/milestones/1.6-r2"),
                 "More about Clipboard: long-pressing the Paste key allows pasting from the past!",
                 "Now supporting devices with non-standard touch support.",
                 "Crashes, crashes, crashes... Gone.",
                 "A few UI refinements.",
-                "YABTU"));
+                "YABTU."));
 
         log.add(new VersionChangeLog(1, 6, "r1", Uri.parse("https://github.com/AnySoftKeyboard/AnySoftKeyboard/milestones/1.6-r1"),
                 "Clipboard actions! Checkout the utility keyboard (swipe up from the space-bar).",

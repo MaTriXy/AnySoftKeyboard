@@ -101,15 +101,16 @@ public class AskPrefsImpl implements AskPrefs, OnSharedPreferenceChangeListener 
     private int mFirstAppVersionInstalled;
 
     private final LinkedList<OnSharedPreferenceChangeListener> mPreferencesChangedListeners = new LinkedList<>();
+    private boolean mAutomaticallySwitchToAppLayout = true;
 
     public AskPrefsImpl(Context context) {
         mContext = context;
 
-        int currentAppVersion = BuildConfig.VERSION_CODE;
         Log.i(TAG, "** Version: " + BuildConfig.VERSION_NAME);
-        Log.i(TAG, "** Release code: " + currentAppVersion);
-        Log.i(TAG, "** Debug: " + BuildConfig.DEBUG);
-        Log.i(TAG, "** DEBUG_LOG: " + FeaturesSet.DEBUG_LOG);
+        Log.i(TAG, "** Release code: " + BuildConfig.VERSION_CODE);
+        Log.i(TAG, "** BUILD_TYPE: " + BuildConfig.BUILD_TYPE);
+        Log.i(TAG, "** DEBUG: " + BuildConfig.DEBUG);
+        Log.i(TAG, "** TESTING_BUILD: " + BuildConfig.TESTING_BUILD);
         Log.i(TAG, "** CUTTING_EDGE: " + FeaturesSet.CUTTING_EDGE);
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(mContext);
         //setting some statistics
@@ -209,7 +210,7 @@ public class AskPrefsImpl implements AskPrefs, OnSharedPreferenceChangeListener 
         Log.d(TAG, "Checking if configuration upgrade is needed.");
         //please note: the default value should be the last version.
         //upgrading should only be done when actually need to be done.
-        int configurationVersion = sp.getInt(CONFIGURATION_VERSION, 8);
+        int configurationVersion = sp.getInt(CONFIGURATION_VERSION, 9);
         if (configurationVersion < 1) {
             boolean oldLandscapeFullScreenValue = sp.getBoolean("fullscreen_input_connection_supported",
                     mContext.getResources().getBoolean(R.bool.settings_default_landscape_fullscreen));
@@ -296,11 +297,21 @@ public class AskPrefsImpl implements AskPrefs, OnSharedPreferenceChangeListener 
                 e.putString(mContext.getString(R.string.settings_key_next_word_suggestion_aggressiveness), "none");
                 Log.i(TAG, "settings_key_next_word_suggestion_aggressiveness is OFF...");
             }
+            e.commit();
+        }
+
+        if (configurationVersion < 9) {
+            final boolean swapSpace = sp.getString("settings_key_should_swap_punctuation_and_space", "yes").equals("yes");
+            Editor e = sp.edit();
+            Log.i(TAG, "Converting settings_key_should_swap_punctuation_and_space to settings_key_bool_should_swap_punctuation_and_space...");
+            e.remove("settings_key_should_swap_punctuation_and_space");
+            e.putBoolean(mContext.getString(R.string.settings_key_bool_should_swap_punctuation_and_space), swapSpace);
+            e.commit();
         }
 
         //saving config level
         Editor e = sp.edit();
-        e.putInt(CONFIGURATION_VERSION, 8);
+        e.putInt(CONFIGURATION_VERSION, 9);
         e.commit();
     }
 
@@ -511,9 +522,8 @@ public class AskPrefsImpl implements AskPrefs, OnSharedPreferenceChangeListener 
                 mContext.getResources().getBoolean(R.bool.settings_default_show_chewbacca));
         Log.d(TAG, "** mUseChewbacca: " + mUseChewbacca);
 
-        String shouldSwapType = sp.getString(mContext.getString(R.string.settings_key_should_swap_punctuation_and_space),
-                mContext.getString(R.string.settings_default_should_swap_punctuation_and_space));
-        mSwapPunctuationAndSpace = shouldSwapType.equals("yes");
+        mSwapPunctuationAndSpace = sp.getBoolean(mContext.getString(R.string.settings_key_bool_should_swap_punctuation_and_space),
+                mContext.getResources().getBoolean(R.bool.settings_default_bool_should_swap_punctuation_and_space));
         Log.d(TAG, "** mSwapPunctuationAndSpace: " + mSwapPunctuationAndSpace);
 
         String animationsLevel = sp.getString(mContext.getString(R.string.settings_key_tweak_animations_level),
@@ -530,10 +540,17 @@ public class AskPrefsImpl implements AskPrefs, OnSharedPreferenceChangeListener 
                 mContext.getResources().getBoolean(R.bool.settings_default_always_use_fallback_user_dictionary));
         Log.d(TAG, "** mAlwaysUseFallBackUserDictionary: " + mAlwaysUseFallBackUserDictionary);
 
+        mAutomaticallySwitchToAppLayout = sp.getBoolean(mContext.getString(R.string.settings_key_persistent_layout_per_package_id),
+                mContext.getResources().getBoolean(R.bool.settings_default_persistent_layout_per_package_id));
+        Log.d(TAG, "** mAutomaticallySwitchToAppLayout: " + mAutomaticallySwitchToAppLayout);
+
         //Some preferences cause rebuild of the keyboard, hence changing the listeners list
         final LinkedList<OnSharedPreferenceChangeListener> disconnectedList = new LinkedList<>(mPreferencesChangedListeners);
         for (OnSharedPreferenceChangeListener listener : disconnectedList) {
-            listener.onSharedPreferenceChanged(sp, key);
+            //before notifying, we'll ensure that the listener is still interested in the callback
+            if (mPreferencesChangedListeners.contains(listener)) {
+                listener.onSharedPreferenceChanged(sp, key);
+            }
         }
     }
 
@@ -818,5 +835,10 @@ public class AskPrefsImpl implements AskPrefs, OnSharedPreferenceChangeListener 
     @Override
     public boolean alwaysUseFallBackUserDictionary() {
         return mAlwaysUseFallBackUserDictionary;
+    }
+
+    @Override
+    public boolean getPersistLayoutForPackageId() {
+        return mAutomaticallySwitchToAppLayout;
     }
 }

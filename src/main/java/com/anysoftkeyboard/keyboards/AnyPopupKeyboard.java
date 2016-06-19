@@ -17,31 +17,33 @@
 package com.anysoftkeyboard.keyboards;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+
+import com.anysoftkeyboard.addons.AddOn;
+import com.anysoftkeyboard.keyboardextensions.KeyboardExtension;
 import com.menny.android.anysoftkeyboard.R;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 public class AnyPopupKeyboard extends AnyKeyboard {
 
     private int mAdditionalWidth = 0;
-    private static final Set<Character> msEmptySet = Collections.emptySet();
+    private static final char[] EMPTY_CHAR_ARRAY = new char[0];
     private final String mKeyboardName;
 
-    public AnyPopupKeyboard(Context askContext, Context context,//note: the context can be from a different package!
+    public AnyPopupKeyboard(@NonNull AddOn keyboardAddOn, Context askContext, Context context,//note: the context can be from a different package!
                             int xmlLayoutResId,
                             final KeyboardDimens keyboardDimens,
                             String keyboardName) {
-        super(askContext, context, xmlLayoutResId, -1);
+        super(keyboardAddOn, askContext, context, xmlLayoutResId, -1);
         mKeyboardName = keyboardName;
         loadKeyboard(keyboardDimens);
     }
 
-    public AnyPopupKeyboard(Context askContext, CharSequence popupCharacters,
+    public AnyPopupKeyboard(@NonNull AddOn keyboardAddOn, @NonNull  Context askContext, CharSequence popupCharacters,
                             final KeyboardDimens keyboardDimens,
                             String keyboardName) {
-        super(askContext, askContext, getPopupLayout(popupCharacters));
+        super(keyboardAddOn, askContext, askContext, getPopupLayout(popupCharacters));
         mKeyboardName = keyboardName;
         loadKeyboard(keyboardDimens);
 
@@ -126,8 +128,8 @@ public class AnyPopupKeyboard extends AnyKeyboard {
 
 
     @Override
-    public Set<Character> getSentenceSeparators() {
-        return msEmptySet;
+    public char[] getSentenceSeparators() {
+        return EMPTY_CHAR_ARRAY;
     }
 
     @Override
@@ -150,13 +152,14 @@ public class AnyPopupKeyboard extends AnyKeyboard {
         return -1;
     }
 
+    @NonNull
     @Override
     public String getKeyboardPrefId() {
         return "keyboard_popup";
     }
 
     @Override
-    protected void addGenericRows(int mode, KeyboardDimens keyboardDimens) {
+    protected void addGenericRows(int mode, KeyboardDimens keyboardDimens, KeyboardExtension topRowPlugin, KeyboardExtension bottomRowPlugin) {
         //no generic rows in popups, only in main keyboard
     }
 

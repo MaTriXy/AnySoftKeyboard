@@ -20,37 +20,55 @@ package com.anysoftkeyboard.devicespecific;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.os.IBinder;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.GestureDetector;
 import android.view.inputmethod.InputConnection;
+import android.view.inputmethod.InputMethodManager;
 
-import com.anysoftkeyboard.IndirectlyInstantiated;
-import com.anysoftkeyboard.base.dictionaries.WordComposer;
+import com.anysoftkeyboard.keyboards.KeyboardAddOnAndBuilder;
+
+import java.util.List;
 
 @TargetApi(3)
-@IndirectlyInstantiated
 public class DeviceSpecific_V3 implements DeviceSpecific {
     public DeviceSpecific_V3() {
     }
 
+    @Override
     public String getApiLevel() {
         return "DeviceSpecific_V3";
     }
 
+    @Override
     public MultiTouchSupportLevel getMultiTouchSupportLevel(Context appContext) {
         return MultiTouchSupportLevel.None;
     }
 
+    @Override
     public GestureDetector createGestureDetector(Context appContext,
                                                  AskOnGestureListener listener) {
         return new GestureDetector(appContext, listener, null);
     }
 
-    public void commitCorrectionToInputConnection(InputConnection ic, WordComposer word) {
-        ic.commitText(word.getPreferredWord(), 1);
+    @Override
+    public void commitCorrectionToInputConnection(InputConnection ic, int wordOffsetInInput, CharSequence oldWord, CharSequence newWord) {
+        ic.commitText(newWord, 1);
     }
 
     @Override
     public boolean isHardwareAcceleratedCanvas(Canvas canvas) {
         return false;
+    }
+
+    @Override
+    public void reportInputMethodSubtypes(@NonNull InputMethodManager inputMethodManager, @NonNull String imeId, @NonNull List<KeyboardAddOnAndBuilder> builders) {
+        //no-op till API 14
+    }
+
+    @Override
+    public void reportCurrentInputMethodSubtypes(@NonNull InputMethodManager inputMethodManager, @NonNull String imeId, @NonNull IBinder token, @Nullable String keyboardLocale, @NonNull String keyboardId) {
+        //no-op till API 14
     }
 }
